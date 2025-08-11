@@ -1,0 +1,49 @@
+[package]
+name = "warehousing-smart-contract"
+version = "0.1.0"
+authors = ["kwt <4344285+kwtalley@users.noreply.github.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+panic = 'abort'
+incremental = false
+overflow-checks = true
+
+[features]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+
+[package.metadata.scripts]
+optimize = """docker run --rm -v "$(pwd)":/code:Z -v "/home/kwt/work/git/provenance-io/provwasm":/home/kwt/work/git/provenance-io/provwasm:Z \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/optimizer:0.16.1
+"""
+
+[dependencies]
+cosmwasm-schema = { version = "2.2.0" }
+cosmwasm-std = { version = "2.2.0", features = [
+  "cosmwasm_2_1",
+  "stargate",
+  "std"
+] }
+cw-storage-plus = "2.0.0"
+cw2 = "2.0.0"
+provwasm-std = {version = "2.6.0", path = "/home/kwt/work/git/provenance-io/provwasm/packages/provwasm-std"}  
+# schemars = "1.0.4"
+serde = { version = "1.0.197", default-features = false, features = ["derive"] }
+thiserror = { version = "2.0.12" }
+
+[dev-dependencies]
+cw-multi-test = "2.5.0"
