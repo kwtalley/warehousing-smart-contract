@@ -120,18 +120,38 @@ echo "Getting the contract address..."
 CONTRACT_ADDRESS=$(provenanced query wasm list-contract-by-code $CODE_ID --node $NODE --home $PIO_HOME --testnet --output json | jq -r '.contracts[0]')
 echo -e "${GREEN}Contract instantiated at address:${NC} $CONTRACT_ADDRESS"
 
-# Step 5: Query the contract
-print_section "Step 5: Query the Contract"
+# Step 5: Create a test marker
+print_section "Step 5: Create a test marker"
 
-echo "Querying the contract configuration..."
-QUERY_CMD="provenanced query wasm contract-state smart \
-        $CONTRACT_ADDRESS \
-        '{}' \
-        --node $NODE \
-        --home $PIO_HOME \
-        --testnet"
-print_cmd "$QUERY_CMD" "Query the contract to verify instantiation"
-execute_cmd "$QUERY_CMD"
+echo "Creating a test marker..."
+CREATE_MARKER_CMD="provenanced tx marker create-finalize-activate 1000hotdogcoin \"$VALIDATOR_ADDRESS,mint,admin;$CONTRACT_ADDRESS,admin\" --from validator --keyring-backend test --home $PIO_HOME --chain-id $CHAIN_ID --node $NODE --gas auto --gas-prices $GAS_PRICES --gas-adjustment $GAS_ADJUSTMENT --testnet --yes | provenanced q wait-tx"
+print_cmd "$CREATE_MARKER_CMD" "Create a test marker"
+execute_cmd "$CREATE_MARKER_CMD"
+
+MARKER_ADDRESS=$(provenanced query marker get hotdogcoin --node $NODE --home $PIO_HOME --testnet --output json | jq -r '.marker.base_account.address')
+
+# Step 6: Pledge
+print_section "Step 6: Pledge"
+
+echo "Pledging..."
+PLEDGE_CMD="provenanced tx wasm execute $CONTRACT_ADDRESS '{\"pledge\": {\"amount\": {\"denom\": \"$CONTRACT_DENOM\", \"amount\": \"1000000000000000000\"}, \"id\": \"1\", \"marker_addr\": \"$MARKER_ADDRESS\"}}' --from validator --keyring-backend test --home $PIO_HOME --chain-id $CHAIN_ID --node $NODE --gas auto --gas-prices $GAS_PRICES --gas-adjustment $GAS_ADJUSTMENT --testnet --yes | provenanced q wait-tx"
+print_cmd "$PLEDGE_CMD" "Pledge using validator account"
+execute_cmd "$PLEDGE_CMD"
+
+
+
+# # Step 7: Query the contract
+# print_section "Step 7: Query the Contract"
+
+# echo "Querying the contract configuration..."
+# QUERY_CMD="provenanced query wasm contract-state smart \
+#         $CONTRACT_ADDRESS \
+#         '{}' \
+#         --node $NODE \
+#         --home $PIO_HOME \
+#         --testnet"
+# print_cmd "$QUERY_CMD" "Query the contract to verify instantiation"
+# execute_cmd "$QUERY_CMD"
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
