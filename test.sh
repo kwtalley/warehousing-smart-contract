@@ -138,20 +138,18 @@ PLEDGE_CMD="provenanced tx wasm execute $CONTRACT_ADDRESS '{\"pledge\": {\"amoun
 print_cmd "$PLEDGE_CMD" "Pledge using validator account"
 execute_cmd "$PLEDGE_CMD"
 
+# Step 7: Query the Pledge
+print_section "Step 7: Query the Pledge"
 
-
-# # Step 7: Query the contract
-# print_section "Step 7: Query the Contract"
-
-# echo "Querying the contract configuration..."
-# QUERY_CMD="provenanced query wasm contract-state smart \
-#         $CONTRACT_ADDRESS \
-#         '{}' \
-#         --node $NODE \
-#         --home $PIO_HOME \
-#         --testnet"
-# print_cmd "$QUERY_CMD" "Query the contract to verify instantiation"
-# execute_cmd "$QUERY_CMD"
+echo "Querying the pledge..."
+QUERY_CMD="provenanced query wasm contract-state smart \
+        $CONTRACT_ADDRESS \
+        '{\"pledge\": {\"id\": \"1\"}}' \
+        --node $NODE \
+        --home $PIO_HOME \
+        --testnet"
+print_cmd "$QUERY_CMD" "Query the pledge"
+execute_cmd "$QUERY_CMD"
 
 echo ""
 echo -e "${GREEN}========================================${NC}"

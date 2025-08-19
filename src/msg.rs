@@ -1,6 +1,8 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Coin;
 
+use crate::state::Pledge;
+
 #[cw_serde]
 pub struct NftInfo {
     pub token_id: String,
@@ -32,4 +34,9 @@ pub enum ExecuteMsg {
 
 #[cw_serde]
 #[derive(QueryResponses)]
-pub enum QueryMsg {}
+pub enum QueryMsg {
+    #[returns(Pledge)]
+    Pledge {
+        id: String,
+    },
+}
