@@ -17,7 +17,6 @@ pub enum PledgeStatus {
 
 #[cw_serde]
 pub struct ContractConfiguration {
-    pub denom: String,
     pub nft_class_id: String,
 }
 

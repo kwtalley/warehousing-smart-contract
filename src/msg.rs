@@ -9,7 +9,6 @@ pub struct NftInfo {
 
 #[cw_serde]
 pub struct InstantiateMsg {
-    pub denom: String,
     pub nft_class_id: String,
 }
 

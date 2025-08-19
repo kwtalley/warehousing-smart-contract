@@ -97,7 +97,7 @@ print_section "Step 3: Instantiate the Contract"
 
 echo "Instantiating the smart contract..."
 INSTANTIATE_CMD="provenanced tx wasm instantiate $CODE_ID \
-        '{\"denom\": \"$CONTRACT_DENOM\", \"nft_class_id\": \"$CONTRACT_NFT_CLASS_ID\"}' \
+        '{\"nft_class_id\": \"$CONTRACT_NFT_CLASS_ID\"}' \
         --admin validator \
         --label \"$CONTRACT_NAME\" \
         --from validator \

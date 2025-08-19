@@ -59,7 +59,6 @@ pub fn instantiate(
 
     // save config
     let config = ContractConfiguration {
-        denom: msg.denom,
         nft_class_id: nft_class_id.clone(),
     };
     CONFIG.save(deps.storage, &config)?;
@@ -81,6 +80,5 @@ pub fn instantiate(
     Ok(Response::new()
         .add_message(msg_create_asset_class)
         .add_attribute("method", "instantiate")
-        .add_attribute("denom", config.denom.clone())
         .add_attribute("nft_class_id", nft_class_id))
 }

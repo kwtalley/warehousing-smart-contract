@@ -13,11 +13,6 @@ pub fn pledge(
     marker_addr: String,
 ) -> Result<Response, ContractError> {
     let config = CONFIG.load(deps.storage)?;
-
-    // check if the denom is correct
-    if info.funds.len() != 1 || info.funds[0].denom != config.denom {
-        return Err(ContractError::InvalidFunds);
-    }
     
     let marker_querier = MarkerQuerier::new(&deps.querier);
     
@@ -29,7 +24,7 @@ pub fn pledge(
     match marker_access_grant {
         Some(marker_access_grant) => {
             // verify Access::Admin
-            if marker_access_grant.permissions.contains(&(Access::Admin as i32)) {
+            if !marker_access_grant.permissions.contains(&(Access::Admin as i32)) {
                 return Err(ContractError::InvalidMarkerPermissions);
             }
         }
