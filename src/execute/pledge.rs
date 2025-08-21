@@ -33,9 +33,9 @@ pub fn pledge(
         }
     }
 
-    // check if the marker is holding all the denom
+    // check if the sender is holding all the denom
     let holding_accts = marker_querier.holding(marker_addr.clone(), None)?.balances;
-    if holding_accts.len() != 1 || holding_accts[0].address != marker_addr {
+    if holding_accts.len() != 1 || holding_accts[0].address.ne(&info.sender.as_str()) {
         return Err(ContractError::InvalidMarkerHolding);
     }
     
